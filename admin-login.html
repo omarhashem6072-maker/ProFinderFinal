@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Profinder</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .login-container {
+            max-width: 340px;
+            margin: 1.25rem auto;
+            padding: 1.1rem 1.25rem;
+            background: #f9f9f9;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .login-container h1 {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            color: #4a90e2;
+            text-align: center;
+        }
+        .login-error {
+            color: #c62828;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .login-error.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>📚 Profinder</h1>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="global-search" placeholder="Search professors, courses...">
+                <button onclick="typeof handleSearch === 'function' && handleSearch()">🔍</button>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="office-hours.html" class="nav-link">Office Hours</a>
+                <a href="calendar.html" class="nav-link">Calendar</a>
+                <a href="admin-login.html" class="nav-link active">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <main class="main-content">
+            <div class="login-container">
+                <h1>Admin Login</h1>
+                <div id="login-error" class="login-error">Invalid username or password.</div>
+                <form id="admin-login-form" onsubmit="handleAdminLogin(event)">
+                    <div class="form-group">
+                        <label for="admin-username">Username</label>
+                        <input type="text" id="admin-username" required autocomplete="username" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Password</label>
+                        <input type="password" id="admin-password" required autocomplete="current-password" placeholder="Password">
+                    </div>
+                    <button type="submit" class="submit-btn" style="width: 100%;">Log in</button>
+                </form>
+                <div style="text-align:center; margin-top: 1rem;">
+                    <a href="ta-signup.html" style="color:#4a90e2; text-decoration:none;">Sign up</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Profinder - Automated Office Hour Board</p>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script>
+        (function() {
+            if (window.isAdminLoggedIn && window.isAdminLoggedIn()) {
+                window.location.replace('admin.html');
+                return;
+            }
+            window.checkAdminSession && window.checkAdminSession(function(ok) {
+                if (ok) window.location.replace('admin.html');
+            });
+        })();
+        function handleAdminLogin(event) {
+            event.preventDefault();
+            var username = document.getElementById('admin-username').value.trim();
+            var password = document.getElementById('admin-password').value.trim();
+            var errorEl = document.getElementById('login-error');
+            var btn = event.target.querySelector('button[type="submit"]');
+            if (!username || !password) {
+                errorEl.textContent = 'Please enter username and password.';
+                errorEl.classList.add('visible');
+                return;
+            }
+            if (btn) { btn.disabled = true; btn.textContent = 'Logging in...'; }
+            errorEl.classList.remove('visible');
+            window.loginWithApi(username, password,
+                function() {
+                    window.location.replace('admin.html');
+                },
+                function(code, msg) {
+                    errorEl.textContent = msg || 'Invalid username or password.';
+                    errorEl.classList.add('visible');
+                    if (btn) { btn.disabled = false; btn.textContent = 'Log in'; }
+                }
+            );
+        }
+    </script>
+</body>
+</html>

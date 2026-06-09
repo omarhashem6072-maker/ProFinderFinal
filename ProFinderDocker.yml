@@ -1,0 +1,88 @@
+# Profinder — microservices (split MySQL: profinder_auth, profinder_core, profinder_oh).
+# Image: server/ProFinderDocker (compose overrides CMD per service).
+# First boot: docker/mysql-init-micro/*.sql creates schemas + demo admin + sample office_hours.
+# If auth fails with ER_BAD_DB_ERROR, the DB volume was created before init existed — run:
+#   docker compose -f ProFinderDocker.yml down -v
+# then up again. For normalized data from an existing monolith DB, use server/schema-split-from-existing-profinder.sql.
+# Entry: http://localhost:3000 (gateway).
+#
+# Run: docker compose -f ProFinderDocker.yml up --build
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3307:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - dbdata_ms:/var/lib/mysql
+      - ./docker/mysql-init-micro:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-prootpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 90s
+
+  auth:
+    build:
+      context: .
+      dockerfile: server/ProFinderDocker
+    environment:
+      PROFINDER_DB_HOST: db
+      PROFINDER_DB_PORT: "3306"
+      PROFINDER_DB_USER: root
+      PROFINDER_DB_PASSWORD: rootpassword
+      PROFINDER_AUTH_SCHEMA: profinder_auth
+      DEMO_TA_SIGNUP_CODE: "123456"
+      AUTH_PORT: "3001"
+    command: ["node", "services/authServer.js"]
+    expose:
+      - "3001"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: server/ProFinderDocker
+    environment:
+      PROFINDER_DB_HOST: db
+      PROFINDER_DB_PORT: "3306"
+      PROFINDER_DB_USER: root
+      PROFINDER_DB_PASSWORD: rootpassword
+      PROFINDER_USE_SPLIT_DB: "1"
+      PROFINDER_CORE_SCHEMA: profinder_core
+      PROFINDER_OH_SCHEMA: profinder_oh
+      PROFINDER_SERVICE: api
+      SESSION_SECRET: change-me-in-production
+      DEMO_TA_SIGNUP_CODE: "123456"
+      PORT: "3002"
+    command: ["node", "server.js"]
+    expose:
+      - "3002"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  gateway:
+    build:
+      context: .
+      dockerfile: server/ProFinderDocker
+    environment:
+      PORT: "3000"
+      SESSION_SECRET: change-me-in-production
+      AUTH_URL: http://auth:3001
+      API_URL: http://api:3002
+    command: ["node", "services/gatewayServer.js"]
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth
+      - api
+
+volumes:
+  dbdata_ms:

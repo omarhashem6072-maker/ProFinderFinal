@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Hours - Profinder</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>📚 Profinder</h1>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="global-search" placeholder="Search professors, courses...">
+                <button onclick="handleSearch()">🔍</button>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="office-hours.html" class="nav-link active">Office Hours</a>
+                <a href="calendar.html" class="nav-link">Calendar</a>
+                <a href="admin-login.html" class="nav-link">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Sidebar Filters -->
+        <aside class="sidebar">
+            <h2>FILTERS</h2>
+            <div class="filter-section">
+                <label for="professor-filter">Professor:</label>
+                <select id="professor-filter" onchange="applyFilters()">
+                    <option value="">All Professors</option>
+                </select>
+            </div>
+            <div class="filter-section">
+                <label for="course-filter">Course:</label>
+                <select id="course-filter" onchange="applyFilters()">
+                    <option value="">All Courses</option>
+                </select>
+            </div>
+            <div class="filter-section">
+                <label>Day:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" value="Monday" onchange="applyFilters()"> Monday</label>
+                    <label><input type="checkbox" value="Tuesday" onchange="applyFilters()"> Tuesday</label>
+                    <label><input type="checkbox" value="Wednesday" onchange="applyFilters()"> Wednesday</label>
+                    <label><input type="checkbox" value="Thursday" onchange="applyFilters()"> Thursday</label>
+                    <label><input type="checkbox" value="Friday" onchange="applyFilters()"> Friday</label>
+                </div>
+            </div>
+            <div class="filter-section">
+                <label for="time-from">Time Range:</label>
+                <input type="time" id="time-from" onchange="applyFilters()">
+                <input type="time" id="time-to" onchange="applyFilters()">
+            </div>
+            <button class="clear-btn" onclick="clearFilters()">Clear All Filters</button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>All Office Hours</h1>
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="setView('cards')">Cards</button>
+                    <button class="view-btn" onclick="setView('table', event)">Table</button>
+                </div>
+            </div>
+
+            <!-- Active Filters Display -->
+            <div id="active-filters" class="active-filters">
+                <!-- Active filters will be shown here -->
+            </div>
+
+            <!-- Office Hours Display -->
+            <div id="office-hours-container" class="office-hours-grid">
+                <!-- Office hours will be loaded here -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button onclick="changePage(-1)">Previous</button>
+                <span id="page-info">Page 1 of 1</span>
+                <button onclick="changePage(1)">Next</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Profinder - Automated Office Hour Board</p>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+
+
+
+

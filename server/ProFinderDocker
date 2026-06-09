@@ -1,0 +1,18 @@
+FROM node:20-alpine
+
+WORKDIR /app/server
+COPY server/package*.json ./
+RUN npm ci
+COPY server/ ./
+
+# Frontend — must live in parent of server/ (see server.js express.static)
+WORKDIR /app
+COPY index.html admin.html admin-login.html office-hours.html calendar.html ta-signup.html ./
+COPY css ./css
+COPY js ./js
+COPY ProFinder ./ProFinder
+
+ENV NODE_ENV=production
+EXPOSE 3000
+WORKDIR /app/server
+CMD ["node", "server.js"]

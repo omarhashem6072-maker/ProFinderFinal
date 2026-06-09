@@ -1,0 +1,1 @@
+-- No default office_hours rows on first init; populate via admin upload or manual entry.

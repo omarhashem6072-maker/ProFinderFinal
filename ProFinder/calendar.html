@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar - Profinder</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>📚 Profinder</h1>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="global-search" placeholder="Search professors, courses...">
+                <button onclick="handleSearch()">🔍</button>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="office-hours.html" class="nav-link">Office Hours</a>
+                <a href="calendar.html" class="nav-link active">Calendar</a>
+                <a href="admin-login.html" class="nav-link">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Sidebar Filters -->
+        <aside class="sidebar">
+            <h2>FILTERS</h2>
+            <div class="filter-section">
+                <label for="professor-filter">Professor:</label>
+                <select id="professor-filter" onchange="applyFilters()">
+                    <option value="">All Professors</option>
+                </select>
+            </div>
+            <div class="filter-section">
+                <label for="course-filter">Course:</label>
+                <select id="course-filter" onchange="applyFilters()">
+                    <option value="">All Courses</option>
+                </select>
+            </div>
+            <button class="clear-btn" onclick="clearFilters()">Clear All Filters</button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="calendar-header">
+                <button onclick="changeWeek(-1)">← Previous Week</button>
+                <h1 id="week-display">Week of ...</h1>
+                <button onclick="changeWeek(1)">Next Week →</button>
+            </div>
+
+            <!-- Weekly Calendar Grid -->
+            <div id="calendar-grid" class="calendar-grid">
+                <!-- Calendar will be generated here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Profinder - Automated Office Hour Board</p>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/calendar.js"></script>
+</body>
+</html>
+
+
+
+
